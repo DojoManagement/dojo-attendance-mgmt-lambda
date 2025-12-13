@@ -20,7 +20,7 @@ sudo pip install -r "$REQUIREMENTS_FILE" -t "$BUILD_DIR"
 echo "📄 Copiando arquivos da aplicação para o diretório de build..."
 sudo cp -r "$SOURCE_DIR"/* "$BUILD_DIR/"
 
-sudo cp -r ../dojo-commons/dojocommons "$BUILD_DIR/"
+#sudo cp -r ../dojo-commons/dojocommons "$BUILD_DIR/"
 
 echo "📁 listando arquivos do $BUILD_DIR"
 ls -l "$BUILD_DIR"

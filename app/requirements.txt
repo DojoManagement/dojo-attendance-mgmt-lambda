@@ -8,8 +8,8 @@ botocore==1.37.38
     # via
     #   boto3
     #   s3transfer
-#dojocommons==1.2.2
-    # via dojo-athlete-mgmt-lambda (./pyproject.toml)
+dojocommons==1.2.3
+    # via dojo-attendance-mgmt-lambda (./pyproject.toml)
 duckdb==1.2.2
     # via dojocommons
 jmespath==1.0.1
@@ -18,14 +18,14 @@ jmespath==1.0.1
     #   botocore
 pydantic==2.10.6
     # via
-    #   dojo-athlete-mgmt-lambda (./pyproject.toml)
+    #   dojo-attendance-mgmt-lambda (./pyproject.toml)
     #   dojocommons
     #   pydantic-settings
 pydantic-core==2.27.2
     # via pydantic
 pydantic-settings==2.8.1
     # via
-    #   dojo-athlete-mgmt-lambda (./pyproject.toml)
+    #   dojo-attendance-mgmt-lambda (./pyproject.toml)
     #   dojocommons
 python-dateutil==2.9.0.post0
     # via botocore

@@ -5,7 +5,7 @@ description = "Lambda responsible for managing athletes in the Dojo Management s
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "dojocommons==1.2.2",
+    "dojocommons==1.2.3",
     "pydantic~=2.10.6",
     "pydantic-settings~=2.8.1",
 ]
