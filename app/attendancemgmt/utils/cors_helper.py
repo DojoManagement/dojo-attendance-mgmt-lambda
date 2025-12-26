@@ -1,0 +1,68 @@
+from typing import Dict, Optional, Any
+from dojocommons.model.response import Response
+
+class CORSHelper:
+    """
+    Helper para adicionar headers CORS às respostas
+    """
+    
+    @staticmethod
+    def get_cors_headers(additional_headers: Optional[Dict[str, str]] = None) -> Dict[str, str]:
+        """
+        Retorna headers CORS padrão
+        """
+        headers = {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',  # Ou específico em produção
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Amz-Date, X-Api-Key',
+            'Access-Control-Max-Age': '300',
+        }
+        
+        if additional_headers:
+            headers.update(additional_headers)
+        
+        return headers
+    
+    @staticmethod
+    def add_cors_headers(response: Response) -> Response:
+        """
+        Adiciona headers CORS a um objeto Response
+        """
+        cors_headers = CORSHelper.get_cors_headers()
+        
+        if response.headers:
+            response.headers.update(cors_headers)
+        else:
+            response.headers = cors_headers
+        
+        return response
+    
+    @staticmethod
+    def create_preflight_response() -> Response:
+        """
+        Cria resposta para requisições OPTIONS (preflight)
+        """
+        return Response(
+            status_code=200,
+            headers=CORSHelper.get_cors_headers(),
+            body={}
+        )
+    
+    @staticmethod
+    def create_error_response(
+        status_code: int,
+        error_message: str,
+        error_type: str = "Error"
+    ) -> Response:
+        """
+        Cria resposta de erro com CORS
+        """
+        return Response(
+            status_code=status_code,
+            headers=CORSHelper.get_cors_headers(),
+            body={
+                "error": error_type,
+                "message": error_message
+            }
+        )

@@ -1,32 +1,43 @@
-import json
 from dojocommons.model.app_configuration import AppConfiguration
 from dojocommons.model.base_event import BaseEvent
-from dojocommons.model.response import Response
-from dojocommons.exception.business_exception import BusinessException
 from attendancemgmt.controller.attendance_controller import AttendanceController
+from attendancemgmt.utils.cors_helper import CORSHelper
+import json
+import traceback
 
-
-def lambda_handler(event: dict, context) -> dict:
-    """Lambda handler para Attendance Management"""
-    print(f"[DEBUG][Lambda] Evento recebido: {json.dumps(event)}")
-    
+def lambda_handler(event, _):
+    print("[DEBUG][Lambda] Evento recebido:", json.dumps(event))
     try:
-        cfg = AppConfiguration()
-        base_event = BaseEvent(**event)
+        if event.get('httpMethod') == 'OPTIONS':
+            print("[DEBUG][Lambda] Requisição OPTIONS detectada (CORS preflight)")
+            response = CORSHelper.create_preflight_response()
+            return response.model_dump(by_alias=True, exclude_none=True)
+        
+        event_obj = BaseEvent.model_validate(event)
+        cfg = AppConfiguration()  # type: ignore
         controller = AttendanceController(cfg)
-        response = controller.dispatch(base_event)
-        return response.model_dump(by_alias=True, exclude_none=True)
- 
-    except BusinessException as e:
-        print(f"Business exception: {e.message}")
-        return Response(
-            status_code=e.status_code,
-            body={"error": e.message}
-        ).model_dump(by_alias=True, exclude_none=True)
+        response = controller.dispatch(event_obj)
+        response = CORSHelper.add_cors_headers(response)
+        print(f"[DEBUG][Lambda] Resposta: {response.status_code}")
     
-    except Exception as e:
-        print(f"Unexpected error: {str(e)}")
-        return Response(
+    except ValueError as err:
+        print(f"[ERROR][Lambda] Erro de validação: {str(err)}")
+        response = CORSHelper.create_error_response(
+            status_code=400,
+            error_message=str(err),
+            error_type="ValidationError"
+        )
+
+    except Exception as err:
+        print(f"[ERROR][Lambda] Erro inesperado: {str(err)}")
+        print(f"[ERROR][Lambda] Traceback: {traceback.format_exc()}")
+        response = CORSHelper.create_error_response(
             status_code=500,
-            body={"error": f"Internal server error: {str(e)}"}
-        ).model_dump(by_alias=True, exclude_none=True)
+            error_message="Internal server error",
+            error_type="InternalError"
+        )
+
+    response_dict = response.model_dump(by_alias=True, exclude_none=True)
+    print(f"[DEBUG][Lambda] Response dict: {json.dumps(response_dict)}")
+
+    return response_dict
