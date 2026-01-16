@@ -8,7 +8,7 @@ botocore==1.37.38
     # via
     #   boto3
     #   s3transfer
-dojocommons==1.2.7
+dojocommons==1.3.0
     # via dojo-attendance-mgmt-lambda (./pyproject.toml)
 duckdb==1.2.2
     # via dojocommons
